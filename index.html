@@ -3,53 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تهانينا! أنتِ الآن صدى طموح</title>
+    <title>SHIELD DZ x طموح | الإطلاق المبتكر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;500;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #060b13; 
+            --grid-color: rgba(255, 255, 255, 0.03);
+            --shield-cyan: #00f0ff;
+            --tomouh-gold: #ffc500;
+            --text-main: #ffffff;
+            --text-muted: #8a9bb2;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Alexandria', sans-serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .tech-grid {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px; z-index: 0; opacity: 0.5;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) scale(3);
+            animation: gridMove 20s linear infinite;
+        }
+
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10;
+        }
+        .screen.active { opacity: 1; pointer-events: auto; }
+
+        .init-btn {
+            background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--shield-cyan); padding: 20px 60px; font-size: 1.2rem;
+            font-family: 'Alexandria', sans-serif; font-weight: 500; letter-spacing: 3px;
+            cursor: pointer; backdrop-filter: blur(10px); transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+        .init-btn:hover {
+            background: var(--shield-cyan); color: var(--bg-base); box-shadow: 0 0 40px rgba(0, 240, 255, 0.4); transform: scale(1.05);
+        }
+
+        .countdown-stage {
+            position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
+        }
+
+        .shockwave {
+            position: absolute; width: 100px; height: 100px; border-radius: 50%;
+            border: 2px solid var(--shield-cyan); opacity: 0; transform: scale(0.5); pointer-events: none;
+        }
+        .shockwave.active { animation: explode 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
+
+        .number {
+            font-family: 'Space Grotesk', sans-serif; font-size: 40vh; font-weight: 700; position: absolute;
+            color: transparent; -webkit-text-stroke: 3px rgba(255, 255, 255, 0.8); opacity: 0; filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.6));
+        }
+        .number.focus-in { animation: laserFocus 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+        .launch-content { text-align: center; max-width: 1100px; padding: 0 40px; display: flex; flex-direction: column; align-items: center; }
+        .logo-box { position: relative; margin-bottom: 40px; }
+        .logo-img { max-width: 320px; opacity: 0; transform: scale(0.9) translateY(40px); filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5)); transition: all 1.8s cubic-bezier(0.2, 1, 0.3, 1) 0.5s; }
+        .logo-img.show { opacity: 1; transform: scale(1) translateY(0); }
+
+        .vision-message {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 40px;
+            backdrop-filter: blur(10px); opacity: 0; transform: translateY(30px); transition: all 1.5s ease 1s;
+        }
+        .vision-message.show { opacity: 1; transform: translateY(0); }
+
+        .vision-title { font-size: 2.8rem; font-weight: 900; color: #ffffff; margin: 0 0 20px 0; letter-spacing: 2px; }
+        .vision-title span { color: var(--shield-cyan); }
+        .vision-text { font-size: 1.3rem; line-height: 1.9; color: var(--text-muted); font-weight: 300; margin: 0; }
+        .vision-text strong { color: #ffffff; font-weight: 500; }
+
+        .tamouh-badge { margin-top: 50px; display: flex; flex-direction: column; align-items: center; opacity: 0; transition: all 2s ease 2s; }
+        .tamouh-badge.show { opacity: 1; }
+        .badge-line { width: 2px; height: 40px; background: linear-gradient(to bottom, transparent, var(--tomouh-gold)); margin-bottom: 15px; }
+        .badge-text { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 8px;}
+        .badge-name { font-size: 2.2rem; font-weight: 900; color: var(--tomouh-gold); text-shadow: 0 0 20px rgba(255, 197, 0, 0.3); letter-spacing: 2px; }
+
+        @keyframes gridMove { 100% { background-position: 0 50px; } }
+        @keyframes laserFocus {
+            0% { transform: scale(3); filter: blur(20px); opacity: 0; -webkit-text-stroke: 1px rgba(0, 240, 255, 0.2); }
+            40% { opacity: 1; -webkit-text-stroke: 4px rgba(0, 240, 255, 1); }
+            100% { transform: scale(1); filter: blur(0); opacity: 0.9; -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8); color: rgba(255,255,255,0.1); }
+        }
+        @keyframes explode {
+            0% { transform: scale(0.5); opacity: 1; border-width: 10px; }
+            100% { transform: scale(6); opacity: 0; border-width: 1px; }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f7f9; font-family: 'Segoe UI', Tahoma, sans-serif;">
-    
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f7f9; padding: 40px 20px;">
-        <tr>
-            <td align="center">
+<body>
+
+    <div class="tech-grid"></div>
+
+    <div id="intro-screen" class="screen active">
+        <button class="init-btn" onclick="igniteLaunchSequence()">بدء بروتوكول الإطلاق</button>
+    </div>
+
+    <div id="countdown-screen" class="screen">
+        <div class="countdown-stage" id="stage">
+            <div id="shockwave" class="shockwave"></div>
+        </div>
+    </div>
+
+    <div id="final-screen" class="screen">
+        <div class="launch-content">
+            <div class="logo-box">
+                <img src="photo_2026-05-04_14-48-11.jpg" alt="SHIELD DZ Logo" id="f-logo" class="logo-img">
+            </div>
+            
+            <div class="vision-message" id="f-vision">
+                <h1 class="vision-title">المستقبل يبدأ <span>الآن</span></h1>
+                <p class="vision-text">
+                    شكراً لكل من شرفنا بحضوره في هذه اللحظة الفاصلة.<br>
+                    اليوم، نحن لا نعلن عن مجرد مشروع؛ بل <strong>نُطلق رؤية استراتيجية</strong> تدمج الابتكار التكنولوجي بالرعاية الصحية.<br>
+                    رحلتنا انطلقت، وبدعمكم وشراكتكم، نصنع أثراً يمتد لأجيال.
+                </p>
+            </div>
+
+            <div class="tamouh-badge" id="f-tamouh">
+                <div class="badge-line"></div>
+                <div class="badge-text">هندسة، إبداع، وقيادة</div>
+                <div class="badge-name">تعاونية فريق طموح</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let count = 10;
+        const stage = document.getElementById('stage');
+        const shockwave = document.getElementById('shockwave');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // 1. نظام نطق الصوت الدرامي والسينمائي
+        let availableVoices = [];
+        window.speechSynthesis.onvoiceschanged = () => { availableVoices = window.speechSynthesis.getVoices(); };
+
+        function getPremiumArabicVoice() {
+            if (availableVoices.length === 0) availableVoices = window.speechSynthesis.getVoices();
+            const premiumNames = ['Google العربية', 'Microsoft Naayf', 'Microsoft Tarik', 'Maged'];
+            for (let name of premiumNames) {
+                let voice = availableVoices.find(v => v.name.includes(name));
+                if (voice) return voice;
+            }
+            return availableVoices.find(v => v.lang.includes('ar')) || null;
+        }
+
+        // نطق بطيء وعميق للفخامة
+        function announce(text, rate = 0.85, pitch = 0.6) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const bestVoice = getPremiumArabicVoice();
+            if (bestVoice) utterance.voice = bestVoice;
+            else utterance.lang = 'ar-SA';
+            utterance.rate = rate; 
+            utterance.pitch = pitch; 
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 2. المحرك الصوتي الجديد (نقي، غير مزعج، ومطمئن)
+        
+        // نبض هادئ وتكنولوجي للأرقام
+        function playSoftPulse() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine'; // صوت نقي جداً
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        // الخلفية السينمائية المرافقة للنطق (تعطي إحساس فيلم وثائقي)
+        function playCinematicDrone() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(130.81, audioCtx.currentTime); // نغمة خفيضة جداً (C3)
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 2); // دخول ناعم
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 12); // تلاشي بطيء جداً
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 12);
+        }
+
+        // صوت الإطلاق الفاخر (كورد موسيقي نقي بدلاً من الضجة المزعجة)
+        function playPremiumTechLaunch() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const now = audioCtx.currentTime;
+
+            // كورد موسيقي نقي ومريح للأذن يعبر عن النجاح (C Major 7)
+            const chord = [261.63, 329.63, 392.00, 493.88]; 
+            chord.forEach(freq => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.2, now + 0.5); // صعود ناعم
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 6); // تلاشي أنيق
+                osc.connect(gain).connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 6);
+            });
+
+            // "Bass" عميق ومريح غير مزعج
+            const sub = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            sub.type = 'triangle';
+            sub.frequency.setValueAtTime(65.41, now);
+            subGain.gain.setValueAtTime(0.6, now);
+            subGain.gain.exponentialRampToValueAtTime(0.001, now + 5);
+            sub.connect(subGain).connect(audioCtx.destination);
+            sub.start(now); sub.stop(now + 5);
+        }
+
+        function triggerNumberDisplay(num) {
+            const oldNum = document.querySelector('.number');
+            if (oldNum) oldNum.remove();
+
+            const numEl = document.createElement('div');
+            numEl.className = 'number focus-in';
+            numEl.innerText = num;
+            stage.appendChild(numEl);
+
+            shockwave.classList.remove('active');
+            void shockwave.offsetWidth;
+            shockwave.classList.add('active');
+
+            playSoftPulse(); // نبض نقي مع كل رقم
+            announce(num.toString(), 0.9, 0.7); // نطق هادئ للأرقام
+        }
+
+        function igniteLaunchSequence() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            availableVoices = window.speechSynthesis.getVoices();
+            
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('countdown-screen').classList.add('active');
+
+            triggerNumberDisplay(count);
+
+            const interval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    triggerNumberDisplay(count);
+                } else {
+                    clearInterval(interval);
+                    executeFinalVision();
+                }
+            }, 1000);
+        }
+
+        function executeFinalVision() {
+            document.getElementById('countdown-screen').classList.remove('active');
+            window.speechSynthesis.cancel();
+            
+            setTimeout(() => {
+                document.getElementById('final-screen').classList.add('active');
                 
-                <div style="background-color: white; border-radius: 20px; text-align: center; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.08); overflow: hidden;">
-                    
-                    <div style="background-color: #0a192f; padding: 40px 20px; color: white;">
-                        <div style="font-size: 3.5rem; margin-bottom: 10px;">🎙️✨</div>
-                        <h1 style="font-size: 2.2rem; margin: 0; color: #ffffff;">أهلاً بـ "صوت" طموح!</h1>
-                    </div>
+                // تشغيل صوت الإطلاق النقي والفخم
+                playPremiumTechLaunch();
 
-                    <div style="padding: 40px 30px;">
-                        <p style="color: #555; font-size: 1.15rem; line-height: 1.8; margin-top: 0; margin-bottom: 25px;">
-                            لأن نبرتكِ تحمل التميز، ولأنكِ تملكين القدرة على منح الكلمات روحاً وتأثيراً، يسعدنا إعلامكِ بأنه تم قبولكِ رسمياً لتكوني الصوت الملهم لفريقنا الإبداعي.
-                        </p>
-                        
-                        <div style="display: inline-block; background-color: #fff4ed; color: #ff6b00; padding: 10px 25px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; border: 2px solid #ff6b00; margin-bottom: 35px;">
-                            مسؤولة التّعليق الصّوتي 🎧
-                        </div>
-                        
-                        <div style="text-align: right; background-color: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 35px; border-right: 4px solid #0a192f;">
-                            <h3 style="color: #0a192f; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem;">الخطوات القادمة:</h3>
-                            <p style="color: #444; margin: 8px 0; font-size: 1.05rem;">1️⃣ <strong>انضمي للمجموعة:</strong> عبر الزر بالأسفل.</p>
-                            <p style="color: #444; margin: 8px 0; font-size: 1.05rem;">2️⃣ <strong>تنسيق النبرة:</strong> سنناقش هوية البودكاست الصوتية.</p>
-                            <p style="color: #444; margin: 8px 0; font-size: 1.05rem;">3️⃣ <strong>ابدئي التسجيل:</strong> لنطلق أولى حلقاتنا معاً.</p>
-                        </div>
-                        
-                        <a href="https://t.me/+EbSR0O6apyQyZmE0" target="_blank" style="background-color: #ff6b00; color: white; text-decoration: none; padding: 14px 35px; border-radius: 12px; display: inline-block; font-weight: bold; font-size: 1.2rem;">انضمي لمجموعة العمل 🚀</a>
-                    </div>
+                // تشغيل الخلفية السينمائية المرافقة للنطق (لخداع الأذن)
+                playCinematicDrone();
 
-                    <div style="background-color: #eef2f5; padding: 20px; border-top: 1px solid #dee2e6;">
-                        <p style="margin: 0; color: #888; font-style: italic; font-size: 0.95rem;">"صوتكِ هو الحكاية، وطموحنا هو الأثر"</p>
-                    </div>
-                </div>
+                // النطق بنبرة بطيئة مع وقفات درامية
+                setTimeout(() => {
+                    const epicText = "تم الإطلاق الرسمي، لمشروع شيلد دي زاد. ... المستقبل، يبدأ الآن. ... برعاية، وإبداع، ... تعاونية فريق طموح.";
+                    announce(epicText, 0.8, 0.6); // صوت بطيء وعميق للفخامة
+                }, 800);
 
-                <div style="margin-top: 25px; font-size: 12px; color: #888; text-align: center;">
-                    <p style="margin-bottom: 5px; color: #888;">وصلتكِ هذه الرسالة لأنكِ صرتِ جزءاً من عائلة طموح.</p>
-                    <a href="{$unsubscribe}" style="color: #0a192f; text-decoration: underline;">إلغاء الاشتراك من هنا</a>
-                </div>
+                document.getElementById('f-logo').classList.add('show');
+                document.getElementById('f-vision').classList.add('show');
+                document.getElementById('f-tamouh').classList.add('show');
 
-            </td>
-        </tr>
-    </table>
-
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
