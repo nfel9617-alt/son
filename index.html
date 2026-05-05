@@ -119,7 +119,7 @@
     <div id="final-screen" class="screen">
         <div class="launch-content">
             <div class="logo-box">
-                <img src="photo_2026-05-04_14-48-11-removebg-preview.png" alt="SHIELD DZ Logo" id="f-logo" class="logo-img">
+                <img src="photo_2026-05-04_14-48-11.jpg" alt="SHIELD DZ Logo" id="f-logo" class="logo-img">
             </div>
             
             <div class="vision-message" id="f-vision">
@@ -145,7 +145,7 @@
         const shockwave = document.getElementById('shockwave');
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // 1. نظام نطق الصوت الدرامي والسينمائي
+        // نظام نطق الصوت الدرامي والسينمائي
         let availableVoices = [];
         window.speechSynthesis.onvoiceschanged = () => { availableVoices = window.speechSynthesis.getVoices(); };
 
@@ -159,7 +159,6 @@
             return availableVoices.find(v => v.lang.includes('ar')) || null;
         }
 
-        // نطق بطيء وعميق للفخامة
         function announce(text, rate = 0.85, pitch = 0.6) {
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
@@ -171,42 +170,90 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // 2. المحرك الصوتي الجديد (نقي، غير مزعج، ومطمئن)
-        
-        // نبض هادئ وتكنولوجي للأرقام
-        function playSoftPulse() {
+        // ==========================================
+        // المحرك الصوتي الجديد: ضربة سينمائية (Cinematic Trailer Hit)
+        // ==========================================
+        function playCinematicImpact(currentNum) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine'; // صوت نقي جداً
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.5);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            const now = audioCtx.currentTime;
+
+            // 1. الضربة العميقة (Sub-Bass Boom) تهز المكان
+            const subOsc = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            subOsc.type = 'sine';
+            // تبدأ بتردد 150 وتنخفض بسرعة لـ 20 لتعطي إحساس السقوط الحر
+            subOsc.frequency.setValueAtTime(150, now);
+            subOsc.frequency.exponentialRampToValueAtTime(20, now + 0.5);
+            
+            subGain.gain.setValueAtTime(1.5, now); // صوت مرتفع للضربة
+            subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2); 
+            
+            subOsc.connect(subGain).connect(audioCtx.destination);
+            subOsc.start(now);
+            subOsc.stop(now + 1.2);
+
+            // 2. مؤثر الهواء أو الاندفاع (Impact Whoosh) للواقعية
+            const bufferSize = audioCtx.sampleRate * 0.5;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1; // توليد ضوضاء بيضاء
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            
+            // فلترة الضوضاء لتبدو وكأنها اندفاع هواء ضخم
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.setValueAtTime(1000, now);
+            noiseFilter.frequency.exponentialRampToValueAtTime(100, now + 0.5); 
+            
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.4, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+            noise.connect(noiseFilter).connect(noiseGain).connect(audioCtx.destination);
+            noise.start(now);
+
+            // 3. رنين التوتر (Tension Ping) - يظهر فقط في آخر 5 ثواني
+            if (currentNum <= 5) {
+                const pingOsc = audioCtx.createOscillator();
+                const pingGain = audioCtx.createGain();
+                pingOsc.type = 'sine';
+                
+                // التردد يرتفع كلما اقتربنا من الصفر
+                const freq = 600 + ((5 - currentNum) * 150); 
+                pingOsc.frequency.setValueAtTime(freq, now);
+                
+                pingGain.gain.setValueAtTime(0, now);
+                pingGain.gain.linearRampToValueAtTime(0.2, now + 0.05); // يضرب بسرعة
+                pingGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); // يتلاشى
+                
+                pingOsc.connect(pingGain).connect(audioCtx.destination);
+                pingOsc.start(now);
+                pingOsc.stop(now + 0.8);
+            }
         }
 
-        // الخلفية السينمائية المرافقة للنطق (تعطي إحساس فيلم وثائقي)
+        // ==========================================
+
         function playCinematicDrone() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(130.81, audioCtx.currentTime); // نغمة خفيضة جداً (C3)
+            osc.frequency.setValueAtTime(130.81, audioCtx.currentTime); 
             gain.gain.setValueAtTime(0, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 2); // دخول ناعم
-            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 12); // تلاشي بطيء جداً
+            gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 2); 
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 12); 
             osc.connect(gain).connect(audioCtx.destination);
             osc.start(); osc.stop(audioCtx.currentTime + 12);
         }
 
-        // صوت الإطلاق الفاخر (كورد موسيقي نقي بدلاً من الضجة المزعجة)
         function playPremiumTechLaunch() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const now = audioCtx.currentTime;
 
-            // كورد موسيقي نقي ومريح للأذن يعبر عن النجاح (C Major 7)
             const chord = [261.63, 329.63, 392.00, 493.88]; 
             chord.forEach(freq => {
                 const osc = audioCtx.createOscillator();
@@ -214,13 +261,12 @@
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(freq, now);
                 gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(0.2, now + 0.5); // صعود ناعم
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 6); // تلاشي أنيق
+                gain.gain.linearRampToValueAtTime(0.2, now + 0.5); 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 6); 
                 osc.connect(gain).connect(audioCtx.destination);
                 osc.start(now); osc.stop(now + 6);
             });
 
-            // "Bass" عميق ومريح غير مزعج
             const sub = audioCtx.createOscillator();
             const subGain = audioCtx.createGain();
             sub.type = 'triangle';
@@ -244,8 +290,8 @@
             void shockwave.offsetWidth;
             shockwave.classList.add('active');
 
-            playSoftPulse(); // نبض نقي مع كل رقم
-            announce(num.toString(), 0.9, 0.7); // نطق هادئ للأرقام
+            // تشغيل الضربة السينمائية القوية بدلاً من الصوت العادي
+            playCinematicImpact(num); 
         }
 
         function igniteLaunchSequence() {
@@ -275,16 +321,12 @@
             setTimeout(() => {
                 document.getElementById('final-screen').classList.add('active');
                 
-                // تشغيل صوت الإطلاق النقي والفخم
                 playPremiumTechLaunch();
-
-                // تشغيل الخلفية السينمائية المرافقة للنطق (لخداع الأذن)
                 playCinematicDrone();
 
-                // النطق بنبرة بطيئة مع وقفات درامية
                 setTimeout(() => {
                     const epicText = "تم الإطلاق الرسمي، لمشروع شيلد دي زاد. ... المستقبل، يبدأ الآن. ... برعاية، وإبداع، ... تعاونية فريق طموح.";
-                    announce(epicText, 0.8, 0.6); // صوت بطيء وعميق للفخامة
+                    announce(epicText, 0.8, 0.6);
                 }, 800);
 
                 document.getElementById('f-logo').classList.add('show');
